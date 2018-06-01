@@ -18,6 +18,5 @@ coverage
 yarn.lock
 package-lock.json
 *.swp
-/dist/
 /test-dist/
 /test-generated/
