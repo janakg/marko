@@ -10,8 +10,10 @@ var CompileContext = require("./CompileContext");
 var globalConfig = require("./config");
 var InlineCompiler = require("./InlineCompiler");
 var ok = require("assert").ok;
-var fs = require("fs");
+var nativeFS = require("fs");
+var virtualFS = require("../vfs");
 var taglibLoader = require("./taglib-loader");
+var fs = nativeFS;
 
 var defaults = extend({}, globalConfig);
 
@@ -40,6 +42,13 @@ var rawParser = new Parser(
         raw: true
     }
 );
+
+function configureVFS(vfs) {
+    if (!vfs) return false;
+
+    fs = vfs;
+    virtualFS.setVirtualFileSystem(vfs);
+}
 
 function configure(newConfig) {
     if (!newConfig) {
@@ -239,6 +248,7 @@ exports.createBuilder = createBuilder;
 exports.compileFile = compileFile;
 exports.compile = compile;
 exports.compileForBrowser = compileForBrowser;
+exports.configureVFS = configureVFS;
 exports.compileFileForBrowser = compileFileForBrowser;
 exports.parseRaw = parseRaw;
 exports.createInlineCompiler = createInlineCompiler;

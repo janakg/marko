@@ -1,12 +1,18 @@
 "use strict";
 
-const fs = require("fs");
+let fs = require("fs");
+const virtualFS = require("../../../vfs");
 const path = require("path");
 
 function getComponentFiles(filename) {
     let ext = path.extname(filename);
     if (ext === ".js") {
         return null;
+    }
+
+    let vfs = virtualFS.getVirtualFileSystem();
+    if (vfs) {
+        fs = vfs;
     }
 
     let nameNoExt = path.basename(filename, ext);
