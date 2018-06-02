@@ -1,7 +1,8 @@
 "use strict";
 
+let fs = require("fs");
+const virtualFS = require("../../vfs");
 const nodePath = require("path");
-const fs = require("fs");
 const stripJsonComments = require("strip-json-comments");
 const tagDefFromCode = require("./tag-def-from-code");
 const loaders = require("./loaders");
@@ -116,6 +117,11 @@ module.exports = function scanTagsDir(
     if (prefix == null) {
         // no prefix by default
         prefix = "";
+    }
+
+    var vfs = virtualFS.getVirtualFileSystem();
+    if (vfs) {
+        fs = vfs;
     }
 
     dir = nodePath.resolve(tagsConfigDirname, dir);

@@ -4,6 +4,7 @@ var ok = require("assert").ok;
 var propertyHandlers = require("property-handlers");
 var isObjectEmpty = require("raptor-util/isObjectEmpty");
 var nodePath = require("path");
+var virtualFS = require("../../vfs");
 var markoModules = require("../modules"); // NOTE: different implementation for browser
 var bodyFunctionRegExp = /^([A-Za-z_$][A-Za-z0-9_]*)(?:\(([^)]*)\))?$/;
 var safeVarName = /^[A-Za-z_$][A-Za-z0-9_]*$/;
@@ -360,9 +361,11 @@ class TagLoader {
     template(value) {
         var tag = this.tag;
         var dirname = this.dirname;
-
         var path = nodePath.resolve(dirname, value);
-        if (!exists(path)) {
+        var vfs = virtualFS.getVirtualFileSystem();
+        var fileExists = vfs ? vfs.realpathSync(path) : exists(path);
+
+        if (!fileExists) {
             throw new Error('Template at path "' + path + '" does not exist.');
         }
         tag.template = path;
