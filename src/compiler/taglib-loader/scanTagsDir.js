@@ -1,6 +1,6 @@
 "use strict";
 
-let fs = require("fs");
+const nativeFS = require("fs");
 const virtualFS = require("../../vfs");
 const nodePath = require("path");
 const stripJsonComments = require("strip-json-comments");
@@ -9,6 +9,7 @@ const loaders = require("./loaders");
 const fsReadOptions = { encoding: "utf8" };
 const extend = require("raptor-util/extend");
 const types = require("./types");
+let fs = nativeFS;
 
 const tagFileTypes = [
     "template",
@@ -119,9 +120,12 @@ module.exports = function scanTagsDir(
         prefix = "";
     }
 
+    //Checking "generated" keyword to allow other lookups. Must be a better way to do this.
     var vfs = virtualFS.getVirtualFileSystem();
-    if (vfs) {
+    if (vfs && dir.indexOf("generated/") > -1) {
         fs = vfs;
+    } else {
+        fs = nativeFS;
     }
 
     dir = nodePath.resolve(tagsConfigDirname, dir);
